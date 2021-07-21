@@ -1,0 +1,22 @@
+sudo: required
+services:
+ - docker
+before_install:
+ - docker build -t jessdev/reac-test -f ./client/Dockerfile.dev ./client
+
+script:
+ - docker run -e CI=true jessdev/reac-tet yarn test
+
+after_success:
+ - docker build -t jessdev/multi-client ./client
+ - docker build -t jessdev/multi-nginx ./nginx
+ - docker build -t jessdev/multi-server ./server
+ - docker build -t jessdev/multi-worker ./worker
+
+  ## Login in docker CLI
+ - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
+ ## take thos images and push them to docker hib 
+ - docker push jessdev/multi-client 
+ - docker push jessdev/multi-nginx 
+ - docker push jessdev/multi-server
+ - docker push jessdev/multi-worker 
