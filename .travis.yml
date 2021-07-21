@@ -14,7 +14,7 @@ after_success:
  - docker build -t jessdev/multi-worker ./worker
 
   ## Login in docker CLI
- - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
+ - echo "\$DOCKER_PASSWORD" | docker login -u "\$DOCKER_ID" --pasword-stdin
  ## take thos images and push them to docker hib 
  - docker push jessdev/multi-client 
  - docker push jessdev/multi-nginx 
