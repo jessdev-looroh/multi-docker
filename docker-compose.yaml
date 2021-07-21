@@ -1,0 +1,51 @@
+version: "3"
+
+services: 
+ posstgres-database:
+  image: postgres:13.3
+  environment: 
+    POSTGRES_PASSWORD: 'X3NusGBBeBedxd666'
+
+ redis:
+  image: redis
+ nginx:
+  restart: always
+  build: 
+   dockerfile: Dockerfile.dev
+   context: ./nginx
+  ports: 
+   - '3050:80'
+ api_server:
+  restart: always
+  build:
+   dockerfile: Dockerfile.dev
+   context: ./server
+  volumes: 
+   - /app/node_modules
+   - /app/dist
+   - ./server:/app  
+  environment: 
+   - REDIST_HOST=redis
+   - REDIST_PORT=6379
+   - PG_HOST=posstgres-database
+   - PG_USER=postgres
+   - PG_DATABASE=postgres
+   - PG_PASSWORD=X3NusGBBeBedxd666
+   - PG_PORT=5432
+  command: ["yarn","start:dev"]
+ 
+ client:
+  build: 
+   dockerfile: Dockerfile.dev   
+   context: ./client
+  volumes: 
+   - /app/node_modules
+   - ./client:/app
+ worker: 
+  build: 
+   dockerfile: Dockerfile.dev
+   context: ./worker
+  volumes: 
+   - /app/node_modules
+   - /app/src
+   - ./worker:/app  
